@@ -16,7 +16,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'signup']]);
     }
 
     /**
@@ -63,9 +63,16 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function me()
+    public function me(Request $request)
     {
-        return response()->json(auth()->user());
+        try {
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::getPayload($token)->toArray();
+            $usuario = User::find($user['id']);
+            return response()->json(["success" => true, "data" => $usuario, "message" => "COMPLETED"], 200);
+        } catch (\Throwable $th) {
+            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
+        }
     }
 
     /**

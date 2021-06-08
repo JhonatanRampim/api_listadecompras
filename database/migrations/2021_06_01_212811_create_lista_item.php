@@ -17,6 +17,7 @@ class CreateListaItem extends Migration
             $table->id();
             $table->unsignedBigInteger('id_lista');
             $table->unsignedBigInteger('id_item');
+            $table->integer('is_checked')->default(0);
             $table->foreign('id_lista')->references('id')->on('lista');
             $table->foreign('id_item')->references('id')->on('item');
             $table->timestamps();

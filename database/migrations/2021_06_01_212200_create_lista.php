@@ -16,7 +16,7 @@ class CreateLista extends Migration
         Schema::create('lista', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->string('descricao');
+            $table->string('descricao')->nullable(true);
             $table->unsignedBigInteger('id_usuario');
             $table->foreign('id_usuario')->references('id')->on('usuarios');
             $table->timestamps();

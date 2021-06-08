@@ -16,6 +16,15 @@ class ListaItem extends Model
 
     protected $table = 'lista_item';
 
+    protected $fillable = [
+        'id_item',
+        'id_lista',
+        'is_checked',
+        'created_at',
+        'updated_at',
+    ];
+
+
     public function item()
     {
         return $this->belongsTo(Item::class, 'id', 'id_item');

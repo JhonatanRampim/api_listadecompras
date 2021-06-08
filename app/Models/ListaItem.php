@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Item extends Model
+class ListaItem extends Model
 {
     use HasFactory;
     /**
@@ -14,19 +14,14 @@ class Item extends Model
      * @var String table
      */
 
-    protected $table = 'item';
+    protected $table = 'lista_item';
 
-    protected $fillable = [
-        'nome',
-        'descricao',
-        'id_usuario',
-        'created_at',
-        'updated_at',
-
-    ];
-
+    public function item()
+    {
+        return $this->belongsTo(Item::class, 'id', 'id_item');
+    }
     public function lista()
     {
-        return $this->belongsToMany(Lista::class, 'lista_item', 'id', 'id_lista');
+        return $this->belongsTo(Lista::class, 'id', 'id_lista');
     }
 }

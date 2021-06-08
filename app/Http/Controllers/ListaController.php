@@ -25,7 +25,7 @@ class ListaController extends Controller
     {
         try {
             $dataReceived['nome_lista'] = $request->nome_lista;
-            $dataReceived['itens'] = $request->itens;
+            $dataReceived['itens'] = (array) $request->itens;
             $token = JWTAuth::getToken();
             $user = JWTAuth::getPayload($token)->toArray();
             $listas = new Lista();
@@ -33,19 +33,19 @@ class ListaController extends Controller
             $item = new Item();
             $listas->nome = $dataReceived['nome_lista'];
             $listas->id_usuario = $user['id'];
-            // $listas->save();
-            var_dump($item);
+
+            $listas->save();
             if ($listas) {
                 foreach ($dataReceived['itens'] as $item) {
-                    $toInsert[] = [
+                    $itens = Item::create([
                         'nome' => $item['nome_item'],
                         'quantidade' => $item['quantidade'],
-                    ];
+                    ]);
+                    $listas->item()->attach($listas->id, array('id_item' => $itens->id, 'id_lista' => $listas->id));
                 }
             }
-            $listas->item()->saveMany($toInsert);
-            // $itens = Item::insert($toInsert);
-            // return $itens;
+
+            return $listas;
         } catch (\Throwable $th) {
             throw $th;
         }

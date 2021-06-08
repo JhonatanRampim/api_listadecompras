@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ListaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,4 +28,17 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
     Route::post('signup', [AuthController::class, 'signup']);
+});
+
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'lista'
+
+], function ($router) {
+
+    Route::post('create', [ListaController::class, 'create']);
+    Route::post('get', [ListaController::class, 'get']);
+    Route::post('update', [ListaController::class, 'update']);
+    Route::post('delete', [ListaController::class, 'delete']);
 });

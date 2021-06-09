@@ -29,7 +29,7 @@ class AuthController extends Controller
         try {
             $credentials = request(['email', 'password']);
 
-            if (!$token = JWTAuth::attempt(array('email' =>  $credentials['email'], 'password' => $credentials['password']))) {
+            if (!$token = JWTAuth::attempt(array('email' =>  $credentials['email'], 'password' => $credentials['password']), ['exp' => 44640])) {
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 

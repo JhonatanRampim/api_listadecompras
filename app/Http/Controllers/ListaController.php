@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\Lista;
+use App\Models\ListaItem;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -29,25 +30,26 @@ class ListaController extends Controller
             $token = JWTAuth::getToken();
             $user = JWTAuth::getPayload($token)->toArray();
             $listas = new Lista();
-            $toInsert = array();
             $item = new Item();
+            $insertedData = array();
             $listas->nome = $dataReceived['nome_lista'];
             $listas->id_usuario = $user['id'];
 
-            $listas->save();
-            if ($listas) {
+            if ($listas->save()) {
                 foreach ($dataReceived['itens'] as $item) {
                     $itens = Item::create([
                         'nome' => $item['nome_item'],
                         'quantidade' => $item['quantidade'],
                     ]);
-                    $listas->item()->attach($listas->id, array('id_item' => $itens->id, 'id_lista' => $listas->id));
+                    $insertedData['itens'][] = ListaItem::create([
+                        'id_item' => $itens->id,
+                        'id_lista' => $listas->id
+                    ]);
                 }
             }
-
-            return $listas;
+            return response()->json(["success" => true, "data" => $insertedData, "message" => "CREATED"], 200);
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
         }
     }
     public function update(Request $request)
@@ -58,7 +60,7 @@ class ListaController extends Controller
             //throw $th;
         }
     }
-    public function delete(Request $request)
+    public function delete(Request $request, )
     {
         try {
             //code...

@@ -23,6 +23,6 @@ class Lista extends Model
 
     public function item()
     {
-        return $this->belongsToMany(Item::class, 'lista_item', 'id', 'id_item');
+        return $this->belongsToMany(Item::class,'lista_item', 'id_lista', 'id')->withPivot('is_checked');
     }
 }

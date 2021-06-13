@@ -6,6 +6,7 @@ use App\Models\Item;
 use App\Models\Lista;
 use App\Models\ListaItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ListaController extends Controller
@@ -13,14 +14,6 @@ class ListaController extends Controller
     public function __construct()
     {
         // $this->middleware('auth:api');
-    }
-    public function get(Request $request)
-    {
-        try {
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
     }
     public function create(Request $request)
     {
@@ -36,31 +29,79 @@ class ListaController extends Controller
             $listas->id_usuario = $user['id'];
 
             if ($listas->save()) {
+                DB::commit();
                 foreach ($dataReceived['itens'] as $item) {
                     $itens = Item::create([
                         'nome' => $item['nome_item'],
                         'quantidade' => $item['quantidade'],
                     ]);
+                    DB::commit();
                     $insertedData['itens'][] = ListaItem::create([
                         'id_item' => $itens->id,
                         'id_lista' => $listas->id
                     ]);
+                    DB::commit();
                 }
             }
             return response()->json(["success" => true, "data" => $insertedData, "message" => "CREATED"], 200);
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
+            DB::rollBack();
             return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
         }
     }
-    public function update(Request $request)
+
+    public function getMyList(Request $request)
     {
         try {
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
+            $userId = $request->id;
+            $lista = new Lista;
+            $dataReturned = $lista::where('id_usuario', $userId)->get();
+
+            return response()->json(["success" => true, "data" => $dataReturned, "message" => "CREATED"], 200);
+        } catch (\Exception $th) {
+            throw $th;
+            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
         }
     }
-    public function delete(Request $request, )
+
+    public function getMyListWithItems(Request $request)
+    {
+        try {
+            $userId = $request->id;
+            $lista = new Lista;
+            $dataToReturn = array();
+
+            $listasItems = $lista::where('id_usuario', $userId)->with('item')->get();
+
+            foreach ($listasItems  as $key => $listaItem) {
+                $filteredItems = array();
+                foreach ($listaItem->item as $key => $item) {
+                    $filteredItems[] = array(
+                        'id_item' => $item->id,
+                        'nome' => $item->nome,
+                        'quantidade' => $item->quantidade,
+                        'is_checked' => $item->pivot->is_checked
+                    );
+                }
+
+                $dataToReturn[] = array(
+                    'id_lista' => $listaItem->id,
+                    'nome' => $listaItem->nome,
+                    'descricao' => $listaItem->descricao,
+                    'created_at' => $listaItem->created_at,
+                    'updated_at' => $listaItem->updated_at,
+                    'items' => $filteredItems
+                );
+            }
+
+            return response()->json(["success" => true, "data" => $dataToReturn, "message" => "CREATED"], 200);
+        } catch (\Exception $th) {
+            throw $th;
+            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
+        }
+    }
+
+    public function update(Request $request)
     {
         try {
             //code...

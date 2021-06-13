@@ -38,7 +38,8 @@ Route::group([
 ], function ($router) {
 
     Route::post('create', [ListaController::class, 'create']);
-    Route::post('get', [ListaController::class, 'get']);
+    Route::post('getMyList', [ListaController::class, 'getMyList']);
+    Route::post('getMyListWithItems', [ListaController::class, 'getMyListWithItems']);
     Route::post('update', [ListaController::class, 'update']);
     Route::post('delete', [ListaController::class, 'delete']);
 });

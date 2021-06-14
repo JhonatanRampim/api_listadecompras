@@ -18,7 +18,8 @@ class ListaController extends Controller
     public function create(Request $request)
     {
         try {
-            $dataReceived['nome_lista'] = $request->nome_lista;
+            $dataReceived['nome_lista'] = $request->nomeLista;
+            $dataReceived['descricao'] = $request->descricao;
             $dataReceived['itens'] = (array) $request->itens;
             $token = JWTAuth::getToken();
             $user = JWTAuth::getPayload($token)->toArray();
@@ -32,7 +33,7 @@ class ListaController extends Controller
                 DB::commit();
                 foreach ($dataReceived['itens'] as $item) {
                     $itens = Item::create([
-                        'nome' => $item['nome_item'],
+                        'nome' => $item['nomeItem'],
                         'quantidade' => $item['quantidade'],
                     ]);
                     DB::commit();

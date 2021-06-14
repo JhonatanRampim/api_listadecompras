@@ -46,7 +46,7 @@ class ListaController extends Controller
             return response()->json(["success" => true, "data" => $insertedData, "message" => "CREATED"], 200);
         } catch (\Exception $th) {
             DB::rollBack();
-            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
+            return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "ERROR"], 200);
         }
     }
 
@@ -60,7 +60,7 @@ class ListaController extends Controller
             return response()->json(["success" => true, "data" => $dataReturned, "message" => "CREATED"], 200);
         } catch (\Exception $th) {
             throw $th;
-            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
+            return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "ERROR"], 200);
         }
     }
 
@@ -68,10 +68,11 @@ class ListaController extends Controller
     {
         try {
             $userId = $request->id;
+            $id = $request->id_lista;
             $lista = new Lista;
             $dataToReturn = array();
 
-            $listasItems = $lista::where('id_usuario', $userId)->with('item')->get();
+            $listasItems = $lista::where('id_usuario', $userId)->orWhere('id', $id)->with('item')->get();
 
             foreach ($listasItems  as $key => $listaItem) {
                 $filteredItems = array();
@@ -97,7 +98,7 @@ class ListaController extends Controller
             return response()->json(["success" => true, "data" => $dataToReturn, "message" => "CREATED"], 200);
         } catch (\Exception $th) {
             throw $th;
-            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
+            return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "ERROR"], 200);
         }
     }
 

@@ -16,7 +16,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'signup']]);
+        $this->middleware('auth:api', ['except' => ['login', 'signup', 'logout']]);
     }
 
     /**
@@ -30,12 +30,12 @@ class AuthController extends Controller
             $credentials = request(['email', 'password']);
 
             if (!$token = JWTAuth::attempt(array('email' =>  $credentials['email'], 'password' => $credentials['password']), ['exp' => 44640])) {
-                return response()->json(['error' => 'Unauthorized'], 401);
+                return response()->json(['success' => false,  'data' => 'Usuário ou Senha inválidos!', 'message' => 'ERROR'], 401);
             }
 
             return response()->json(['success' => true, 'token' => $token, 'message' => 'CREATED'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['success' => false, 'error' => $th, 'message' => 'ERROR'], 200);
+            return response()->json(['success' => false, 'data' => $th, 'message' => 'ERROR'], 200);
         }
     }
     /**
@@ -82,9 +82,12 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        try {
+            $dataToReturn = auth()->logout();
+            return response()->json(["success" => true, "data" => $dataToReturn, "message" => "LOGGED OUT"], 200);
+        } catch (\Exception $th) {
+            return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "ERROR"], 200);
+        }
     }
 
     /**

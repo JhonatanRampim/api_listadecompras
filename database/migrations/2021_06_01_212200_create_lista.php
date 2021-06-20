@@ -18,6 +18,7 @@ class CreateLista extends Migration
             $table->string('nome');
             $table->string('descricao')->nullable(true);
             $table->unsignedBigInteger('id_usuario');
+            $table->integer('is_used')->default(0);
             $table->foreign('id_usuario')->references('id')->on('usuarios');
             $table->timestamps();
         });

@@ -53,8 +53,8 @@ class AuthController extends Controller
             $usuario->password = app('hash')->make($credentials['password']);
             $usuario->save();
             return response()->json(["success" => true, "data" => $usuario, "message" => "CREATED"], 200);
-        } catch (\Throwable $th) {
-            return response()->json(["success" => false, "data" => $th, "message" => "CREATED"], 200);
+        } catch (\Exception $th) {
+            return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "CREATED"], 200);
         }
     }
 
@@ -98,6 +98,24 @@ class AuthController extends Controller
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
+    }
+
+    public function check(Request $request)
+    {
+
+        try {
+
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['success' => false, 'message' => 'user_not_found'], 404);
+            }
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return response()->json(['success' => false, 'message' => 'token_expired'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['success' => false, 'message' => 'token_invalid'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['success' => false, 'message' => 'token_absent'], 401);
+        }
+        return response()->json(['success' => true, 'data' => compact('user')], 200);
     }
 
     /**

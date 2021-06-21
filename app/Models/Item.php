@@ -18,8 +18,7 @@ class Item extends Model
 
     protected $fillable = [
         'nome',
-        'descricao',
-        'id_usuario',
+        'quantidade',
         'created_at',
         'updated_at',
 

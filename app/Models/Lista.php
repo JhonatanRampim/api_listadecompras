@@ -16,6 +16,16 @@ class Lista extends Model
 
     protected $table = 'lista';
 
+    protected $fillable = [
+        'nome',
+        'descricao',
+        'id_usuario',
+        'is_used',
+        'created_at',
+        'updated_at',
+
+    ];
+
     public function usuario()
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id');

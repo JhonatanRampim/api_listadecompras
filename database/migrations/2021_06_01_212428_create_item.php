@@ -16,7 +16,7 @@ class CreateItem extends Migration
         Schema::create('item', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->integer('quantidade')->nullable(true);
+            $table->integer('quantidade')->default(0)->nullable(true);
             $table->timestamps();
         });
     }

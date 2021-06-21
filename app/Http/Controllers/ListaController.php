@@ -29,6 +29,7 @@ class ListaController extends Controller
             $insertedData = array();
             $listas->nome = $dataReceived['nome_lista'];
             $listas->id_usuario = $user['id'];
+            $listas->descricao = $dataReceived['descricao'];
             if ($listas->save()) {
                 DB::commit();
                 foreach ($dataReceived['itens'] as $item) {

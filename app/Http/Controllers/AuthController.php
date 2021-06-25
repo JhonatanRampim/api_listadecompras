@@ -35,7 +35,7 @@ class AuthController extends Controller
 
             return response()->json(['success' => true, 'token' => $token, 'message' => 'CREATED'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['success' => false, 'data' => $th, 'message' => 'ERROR'], 200);
+            return response()->json(['success' => false, 'data' => $th->getMessage(), 'message' => 'ERROR'], 200);
         }
     }
     /**
@@ -71,7 +71,7 @@ class AuthController extends Controller
             $usuario = User::find($user['id']);
             return response()->json(["success" => true, "data" => $usuario, "message" => "COMPLETED"], 200);
         } catch (\Throwable $th) {
-            return response()->json(["success" => false, "data" => $th, "message" => "ERROR"], 200);
+            return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "ERROR"], 200);
         }
     }
 

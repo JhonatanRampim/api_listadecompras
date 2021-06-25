@@ -18,6 +18,7 @@ class ListaController extends Controller
     }
     public function create(Request $request)
     {
+        DB::beginTransaction();
         try {
             $dataReceived['nome_lista'] = $request->nome;
             $dataReceived['descricao'] = $request->descricao;
@@ -31,20 +32,19 @@ class ListaController extends Controller
             $listas->id_usuario = $user['id'];
             $listas->descricao = $dataReceived['descricao'];
             if ($listas->save()) {
-                DB::commit();
                 foreach ($dataReceived['itens'] as $item) {
                     $itens = Item::create([
                         'nome' => $item['nomeItem'],
                         'quantidade' => $item['quantidade'],
                     ]);
-                    DB::commit();
+
                     $insertedData['itens'][] = ListaItem::create([
                         'id_item' => $itens->id,
                         'id_lista' => $listas->id
                     ]);
-                    DB::commit();
                 }
             }
+            DB::commit();
             return response()->json(["success" => true, "data" => $insertedData, "message" => "CREATED"], 200);
         } catch (\Exception $th) {
             DB::rollBack();
@@ -105,6 +105,7 @@ class ListaController extends Controller
 
     public function updateCheckedLista(Request $request)
     {
+        DB::beginTransaction();
         try {
             $itensToCheck = $request->itensToCheck;
             $dataToReturn = array();

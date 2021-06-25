@@ -28,8 +28,8 @@ class AuthController extends Controller
     {
         try {
             $credentials = request(['email', 'password']);
-
-            if (!$token = JWTAuth::attempt(array('email' =>  $credentials['email'], 'password' => $credentials['password']), ['exp' => 44640])) {
+            JWTAuth::factory()->setTTL(43800);
+            if (!$token = JWTAuth::attempt(array('email' =>  $credentials['email'], 'password' => $credentials['password']))) {
                 return response()->json(['success' => false,  'data' => 'Usuário ou Senha inválidos!', 'message' => 'ERROR'], 401);
             }
 

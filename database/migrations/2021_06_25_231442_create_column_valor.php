@@ -14,7 +14,7 @@ class CreateColumnValor extends Migration
     public function up()
     {
         Schema::table('item', function (Blueprint $table) {
-            $table->float('valor', 8, 2);
+            $table->float('valor', 8, 2)->default(0.00);
         });
     }
 

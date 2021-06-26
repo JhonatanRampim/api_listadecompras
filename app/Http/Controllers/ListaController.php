@@ -105,18 +105,26 @@ class ListaController extends Controller
 
     public function updateCheckedLista(Request $request)
     {
-        // DB::beginTransaction();
+        DB::beginTransaction();
         try {
-
+            $id_lista = $request->id_lista;
             $itensToCheck = $request->itens;
             $total = $request->total;
-            $this->_updateListValue($request->id_lista, $total);
-          
             $dataToReturn = array();
-            // foreach ($itensToCheck as $key => $item) {
-            //     $dataToReturn[] = ListaItem::where('id_lista', $item['id_lista'])->where('id_item', $item['id_item'])->update(['is_checked' => $item['is_checked']]);
-            // }
-            // DB::commit();
+            if (!$this->_updateListValue($id_lista, $total)) {
+                DB::rollBack();
+                return response()->json(["success" => false, "data" => 'Erro ao atualizar valor total!', "message" => "ERROR"], 200);
+            }
+            foreach ($itensToCheck as $key => $item) {
+                if (!$this->_updateItemValue($item['id_item'], $item['valor'])) {
+                    DB::rollBack();
+                    return response()->json(["success" => false, "data" => 'Erro ao atualizar valor do item!', "message" => "ERROR"], 200);
+                }
+            }
+            foreach ($itensToCheck as $key => $item) {
+                $dataToReturn[] = ListaItem::where('id_lista',  $id_lista)->where('id_item', $item['id_item'])->update(['is_checked' => $item['isChecked']]);
+            }
+            DB::commit();
             return response()->json(["success" => true, "data" => $dataToReturn, "message" => "CREATED"], 200);
         } catch (\Exception $th) {
             DB::rollBack();
@@ -126,8 +134,33 @@ class ListaController extends Controller
 
     private function _updateListValue($id_lista, $valor)
     {
-        var_dump($id_lista, $valor);
-        die;
+        try {
+            $valor = floatval($valor);
+            $lista = Lista::find($id_lista);
+            $lista->valor = $valor;
+            if (!$lista->save()) {
+                return false;
+            }
+            return true;
+        } catch (\Exception $th) {
+            throw $th;
+        }
+    }
+
+    private function _updateItemValue($id_item, $valor)
+    {
+        try {
+            $valor = floatval($valor);
+            $itemDB = Item::find($id_item);
+            $itemDB->valor =  $valor;
+
+            if (!$itemDB->save()) {
+                return false;
+            }
+            return true;
+        } catch (\Exception $th) {
+            throw $th;
+        }
     }
 
     public function update(Request $request)

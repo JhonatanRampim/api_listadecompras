@@ -105,19 +105,29 @@ class ListaController extends Controller
 
     public function updateCheckedLista(Request $request)
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
         try {
-            $itensToCheck = $request->itensToCheck;
+
+            $itensToCheck = $request->itens;
+            $total = $request->total;
+            $this->_updateListValue($request->id_lista, $total);
+          
             $dataToReturn = array();
-            foreach ($itensToCheck as $key => $item) {
-                $dataToReturn[] = ListaItem::where('id_lista', $item['id_lista'])->where('id_item', $item['id_item'])->update(['is_checked' => $item['is_checked']]);
-            }
-            DB::commit();
+            // foreach ($itensToCheck as $key => $item) {
+            //     $dataToReturn[] = ListaItem::where('id_lista', $item['id_lista'])->where('id_item', $item['id_item'])->update(['is_checked' => $item['is_checked']]);
+            // }
+            // DB::commit();
             return response()->json(["success" => true, "data" => $dataToReturn, "message" => "CREATED"], 200);
         } catch (\Exception $th) {
             DB::rollBack();
             return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "ERROR"], 200);
         }
+    }
+
+    private function _updateListValue($id_lista, $valor)
+    {
+        var_dump($id_lista, $valor);
+        die;
     }
 
     public function update(Request $request)

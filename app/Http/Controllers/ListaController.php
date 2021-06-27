@@ -88,8 +88,9 @@ class ListaController extends Controller
                     );
                 }
 
-                $dataToReturn[] = array(
+                $dataToReturn = array(
                     'id_lista' => $listaItem->id,
+                    'id_usuario' => $listaItem->id_usuario,
                     'nome' => $listaItem->nome,
                     'valor' => $listaItem->valor,
                     'descricao' => $listaItem->descricao,
@@ -167,10 +168,36 @@ class ListaController extends Controller
 
     public function update(Request $request)
     {
+        DB::beginTransaction();
         try {
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
+            $id_lista = $request->id_lista;
+            $id_usuario = $request->id_usuario;
+            $itens = $request->items;
+            $dataToReturn = array();
+            $itemCreated = array();
+            $listaItem = array();
+            $updatedItem = array();
+            foreach ($itens as $key => $item) {
+                if ($item['id_item'] == 0) {
+                    $itemCreated = Item::create(['nome' => $item['nome'], 'quantidade' => $item['quantidade']]);
+                    $listaItem = ListaItem::create([
+                        'id_item' => $itemCreated->id,
+                        'id_lista' => $id_lista
+                    ]);
+                } else {
+                    $updatedItem = Item::where('id', $item['id_item'])->update(['nome' => $item['nome'], 'quantidade' => $item['quantidade']]);
+                }
+                $dataToReturn = array(
+                    'id_item' => $itemCreated,
+                    'lista_item' => $listaItem,
+                    'updated_item' => $updatedItem
+                );
+            }
+            DB::commit();
+            return response()->json(["success" => true, "data" => $dataToReturn, "message" => "CREATED"], 200);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return response()->json(["success" => false, "data" => $th->getMessage(), "message" => "ERROR"], 200);
         }
     }
 }

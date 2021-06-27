@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EstatisticasController;
 use App\Http\Controllers\ListaController;
 
 /*
@@ -44,4 +45,17 @@ Route::group([
     Route::post('update', [ListaController::class, 'update']);
     Route::post('checkList', [ListaController::class, 'updateCheckedLista']);
     Route::post('delete', [ListaController::class, 'delete']);
+});
+
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'stats'
+
+], function ($router) {
+
+    Route::post('itens', [EstatisticasController::class, 'getUserTotalItens']);
+    Route::post('value-list', [EstatisticasController::class, 'getUserTotalSpentByList']);
+    Route::post('value-item', [EstatisticasController::class, 'getUserTotalSpentItem']);
+  
 });

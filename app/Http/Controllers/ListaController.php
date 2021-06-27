@@ -83,13 +83,15 @@ class ListaController extends Controller
                         'id_item' => $item->id,
                         'nome' => $item->nome,
                         'quantidade' => $item->quantidade,
-                        'is_checked' => $item->pivot->is_checked
+                        'is_checked' => $item->pivot->is_checked,
+                        'valor' => $item->valor
                     );
                 }
 
                 $dataToReturn[] = array(
                     'id_lista' => $listaItem->id,
                     'nome' => $listaItem->nome,
+                    'valor' => $listaItem->valor,
                     'descricao' => $listaItem->descricao,
                     'created_at' => $listaItem->created_at,
                     'updated_at' => $listaItem->updated_at,

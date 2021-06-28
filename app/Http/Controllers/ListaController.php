@@ -205,15 +205,13 @@ class ListaController extends Controller
         DB::beginTransaction();
         try {
             $id_lista = $request->id_lista;
-            $id_usuario = $request->id_usuario;
             $listaItens = ListaItem::where('id_lista', $id_lista)->get();
             if ($listaItens) {
                 ListaItem::where('id_lista', $id_lista)->delete();
                 foreach ($listaItens as $key => $listaItem) {
                     Item::where('id', $listaItem->id_item)->delete();
                 }
-                Lista::where('id', $id_lista)->delete();
-               
+                Lista::where('id', $id_lista)->delete(); 
             }
             DB::commit();
             return response()->json(["success" => true, "data" => 'Lista Excluída', "message" => "CREATED"], 200);

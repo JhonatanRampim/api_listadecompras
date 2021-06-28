@@ -32,8 +32,6 @@ class EstatisticasController extends Controller
         try {
             $userId = $request->user_id;
             $total = DB::table('lista')
-                ->join('lista_item', 'lista.id', '=', 'lista_item.id_item')
-                ->join('item', 'item.id', '=', 'lista_item.id_item')
                 ->join('usuarios', 'lista.id_usuario', '=', 'usuarios.id')
                 ->where('usuarios.id', $userId)
                 ->sum('lista.valor');

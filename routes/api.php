@@ -44,7 +44,7 @@ Route::group([
     Route::post('getMyListWithItems', [ListaController::class, 'getMyListWithItems']);
     Route::post('update', [ListaController::class, 'update']);
     Route::post('checkList', [ListaController::class, 'updateCheckedLista']);
-    Route::post('delete', [ListaController::class, 'delete']);
+    Route::post('delete', [ListaController::class, 'excluirLista']);
 });
 
 Route::group([
